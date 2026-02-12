@@ -11,6 +11,10 @@ permissions:
 jobs:
   policy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,4 +41,10 @@ jobs:
           IMAGE=ghcr.io/${{ github.repository }}/policy-gate:${{ github.sha }}
           docker build -t $IMAGE .
           docker push $IMAGE
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::490159260943:role/github-actions-terraform
+          aws-region: eu-west-2
                 
