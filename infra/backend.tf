@@ -3,7 +3,7 @@ terraform {
     bucket         = "pipelineguard-chatgpt-fola"
     key            = "platform-foundations/terraform.tfstate"
     region         = "eu-west-2"
-    dynamodb_table = "REPLACE_ME"
+    dynamodb_table = "pipelineguard-chatgpt"
     encrypt        = true
   }
 }
