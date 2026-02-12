@@ -19,12 +19,12 @@ jobs:
       - name: Run policy gate (non-prod default)
         run: python scripts/policy_check.py
 
-      - name: Build policy image (tag with commit SHA)
-        run: docker build -t policy-gate:${{ github.sha }} .
-        
       - name: Run policy gate (prod should fail)
         env:
           ENVIRONMENT: prod
           REPLICA_COUNT: "2"
         run: python scripts/policy_check.py
-        
+
+      - name: Build policy image (tag with commit SHA)
+        run: docker build -t policy-gate:${{ github.sha }} .
+                
