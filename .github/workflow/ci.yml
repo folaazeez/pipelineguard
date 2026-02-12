@@ -24,3 +24,4 @@ jobs:
           ENVIRONMENT: prod
           REPLICA_COUNT: "2"
         run: python scripts/policy_check.py
+        
