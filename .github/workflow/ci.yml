@@ -18,3 +18,9 @@ jobs:
       
       - name: Run policy gate (non-prod default)
         run: python scripts/policy_check.py
+        
+      - name: Run policy gate (prod should fail)
+        env:
+          ENVIRONMENT: prod
+          REPLICA_COUNT: "2"
+        run: python scripts/policy_check.py
