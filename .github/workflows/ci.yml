@@ -68,8 +68,7 @@ jobs:
       - name: Terraform validate
         working-directory: infra
         run: terraform validate
-
+         
       - name: Terraform plan
         working-directory: infra
-        run: terraform plan -no-color
-          
+        run: terraform plan -no-color -var="policy_gate_image=${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}"
