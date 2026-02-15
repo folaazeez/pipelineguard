@@ -36,6 +36,12 @@ jobs:
 #         docker build -t $IMAGE .
 #         docker push $IMAGE
 
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::490159260943:role/github-actions-terraform
+          aws-region: eu-west-2
+          
       - name: Login to Amazon ECR
         run: aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${{ steps.ecr.outputs.registry }}
 
@@ -48,12 +54,6 @@ jobs:
           IMAGE=${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}
           docker build -t $IMAGE .
           docker push $IMAGE
-          
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::490159260943:role/github-actions-terraform
-          aws-region: eu-west-2
           
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
