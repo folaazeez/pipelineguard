@@ -41,9 +41,6 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::490159260943:role/github-actions-terraform
           aws-region: eu-west-2
-          
-      - name: Login to Amazon ECR
-        run: aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${{ steps.ecr.outputs.registry }}
 
       - name: Login to Amazon ECR
         id: ecr
