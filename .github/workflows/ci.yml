@@ -75,10 +75,12 @@ jobs:
           aws-region: eu-west-2
 
       - name: Login to Amazon ECR
+        if: github.event_name == 'push'
         id: ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push image to ECR
+        if: github.event_name == 'push'
         run: |
           IMAGE=${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}
           docker build -t $IMAGE .
