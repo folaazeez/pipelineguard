@@ -6,4 +6,5 @@ variable "aws_region" {
 variable "policy_gate_image" {
   type        = string
   description = "Container image URI for policy-gate (including tag)"
+  default     = ""
 }
