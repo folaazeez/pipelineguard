@@ -43,7 +43,7 @@ resource "aws_ecs_task_definition" "policy_gate" {
 
   container_definitions = jsonencode([{
     name  = "policy-gate"
-    image = "REPLACE_WITH_IMAGE"
+    image = var.policy_gate_image
     essential = true
     environment = [
       { name = "ENVIRONMENT", value = "dev" }
