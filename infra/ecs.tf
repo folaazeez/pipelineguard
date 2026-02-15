@@ -43,7 +43,7 @@ resource "aws_ecs_task_definition" "policy_gate" {
 
   container_definitions = jsonencode([{
     name      = "policy-gate"
-    image = var.policy_gate_image != "" ? var.policy_gate_image : "public.ecr.aws/amazonlinux/amazonlinux:latest"
+    image     = var.policy_gate_image != "" ? var.policy_gate_image : "public.ecr.aws/amazonlinux/amazonlinux:latest"
     essential = true
     environment = [
       { name = "ENVIRONMENT", value = "dev" }
