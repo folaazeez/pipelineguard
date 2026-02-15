@@ -37,11 +37,11 @@ jobs:
 #         docker push $IMAGE
 
       - name: Login to Amazon ECR
-        id: ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        run: aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${{ steps.ecr.outputs.registry }}
 
       - name: Login to Amazon ECR
-        run: aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${{ steps.ecr.outputs.registry }}
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push image to ECR
         run: |
