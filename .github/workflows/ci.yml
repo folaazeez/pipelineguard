@@ -70,7 +70,7 @@ jobs:
         run: terraform validate
 
       - name: Show image being planned
-        run: echo "Planning image: ${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}"
+        run: echo "Planning image :- ${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}"
 
       - name: Terraform plan
         working-directory: infra
