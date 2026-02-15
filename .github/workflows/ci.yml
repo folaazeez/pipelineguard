@@ -66,6 +66,12 @@ jobs:
         working-directory: infra
         run: terraform init
 
+      - name: Show backend and state summary
+        working-directory: infra
+        run: |
+          terraform providers
+          terraform state list || true
+
       - name: Terraform validate
         working-directory: infra
         run: terraform validate
