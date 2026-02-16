@@ -38,8 +38,8 @@ jobs:
       - name: Create ECR repo (main only)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         working-directory: infra
-        run: terraform apply -auto-approve  -no-color -var="policy_gate_image=BLANK" -target=aws_ecr_repository.policy_gate
-        
+        run: terraform apply -auto-approve  -no-color -target=aws_ecr_repository.policy_gate
+
   policy:
     runs-on: ubuntu-22.04
     needs: infra_bootstrap    
