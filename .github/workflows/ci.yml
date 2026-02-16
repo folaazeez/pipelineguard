@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-  packages: write        
+  packages: write
 
 jobs:
   infra_bootstrap:
@@ -39,10 +39,10 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         working-directory: infra
         run: terraform apply -auto-approve  -no-color -var="policy_gate_image=BLANK" -target=aws_ecr_repository.policy_gate
-        
+
   policy:
     runs-on: ubuntu-22.04
-    needs: infra_bootstrap    
+    needs: infra_bootstrap
     permissions:
       id-token: write
       contents: read
@@ -50,23 +50,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Set up python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      
+
       - name: Run policy gate (non-prod default)
         run: python scripts/policy_check.py
 
-#     - name: Log in to GHCR
-#       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      #     - name: Log in to GHCR
+      #       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-#     - name: Build and push image
-#       run: |
-#         IMAGE=ghcr.io/${{ github.repository }}/policy-gate:${{ github.sha }}
-#         docker build -t $IMAGE .
-#         docker push $IMAGE
+      #     - name: Build and push image
+      #       run: |
+      #         IMAGE=ghcr.io/${{ github.repository }}/policy-gate:${{ github.sha }}
+      #         docker build -t $IMAGE .
+      #         docker push $IMAGE
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
@@ -75,22 +75,21 @@ jobs:
           aws-region: eu-west-2
 
       - name: Login to Amazon ECR
-        if: github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         id: ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push image to ECR
-        if: github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
-          IMAGE=${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}
-          docker build -t $IMAGE .
-          docker push $IMAGE
-          
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.6.6"
-          terraform_wrapper: false          
+          terraform_wrapper: false
 
       - name: Terraform fmt (check)
         working-directory: infra
