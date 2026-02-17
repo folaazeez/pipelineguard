@@ -1,0 +1,11 @@
+{
+  "Sid": "PassOnlyEcsTaskExecutionRole",
+  "Effect": "Allow",
+  "Action": "iam:PassRole",
+  "Resource": "arn:aws:iam::490159260943:role/ecsTaskExecutionRole-platform-foundations",
+  "Condition": {
+    "StringEquals": {
+      "iam:PassedToService": "ecs-tasks.amazonaws.com"
+    }
+  }
+}
