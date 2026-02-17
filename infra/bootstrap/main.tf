@@ -13,6 +13,16 @@ resource "aws_s3_bucket_versioning" "tf_state" {
   }
 }
 
+resource "aws_iam_policy" "terraform_ci" {
+  name   = "terraform-ci-policy"
+  policy = file("${path.module}/terraform-ci-policy.json")
+}
+
+resource "aws_iam_role_policy_attachment" "terraform_ci_attach" {
+  role       = aws_iam_role.github_actions_tf.name
+  policy_arn = aws_iam_policy.terraform_ci.arn
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "tf_state" {
   bucket = aws_s3_bucket.tf_state.id
   rule {
@@ -76,10 +86,10 @@ resource "aws_iam_role" "github_actions_tf" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "tf_admin" {
-  role       = aws_iam_role.github_actions_tf.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
-}
+# resource "aws_iam_role_policy_attachment" "tf_admin" {
+#   role       = aws_iam_role.github_actions_tf.name
+#   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+# }
 
 output "github_actions_role_arn" {
   value = aws_iam_role.github_actions_tf.arn
