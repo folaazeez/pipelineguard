@@ -114,4 +114,4 @@ jobs:
       - name: Terraform apply (main only)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         working-directory: infra
-        run: terraform apply -auto-approve -var="policy_gate_image=$IMAGE_URI
+        run: terraform apply -auto-approve -var="policy_gate_image=$IMAGE_URI"
