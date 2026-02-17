@@ -46,7 +46,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -76,7 +75,6 @@ jobs:
       - name: Build and push image to ECR
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
-          IMAGE=${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}
           docker build -t $IMAGE .
           docker push $IMAGE
           
