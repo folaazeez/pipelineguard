@@ -105,7 +105,7 @@ jobs:
         run: terraform validate
 
       - name: Show image being planned
-        run: echo "Planning image: $IMAGE_URI""
+        run: echo "Planning image: $IMAGE_URI"
 
       - name: Terraform plan
         working-directory: infra
