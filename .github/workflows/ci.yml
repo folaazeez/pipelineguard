@@ -59,28 +59,22 @@ jobs:
       - name: Run policy gate (non-prod default)
         run: python scripts/policy_check.py
 
-#     - name: Log in to GHCR
-#       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-#     - name: Build and push image
-#       run: |
-#         IMAGE=ghcr.io/${{ github.repository }}/policy-gate:${{ github.sha }}
-#         docker build -t $IMAGE .
-#         docker push $IMAGE
-
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::490159260943:role/github-actions-terraform
           aws-region: eu-west-2
 
+      - name: Set image URI
+        run: echo "IMAGE_URI=490159260943.dkr.ecr.eu-west-2.amazonaws.com/policy-gate:${{ github.sha }}" >> $GITHUB_ENV
+
       - name: Login to Amazon ECR
-        if: github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         id: ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push image to ECR
-        if: github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           IMAGE=${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}
           docker build -t $IMAGE .
@@ -111,13 +105,13 @@ jobs:
         run: terraform validate
 
       - name: Show image being planned
-        run: echo "Planning image :- ${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}"
+        run: echo "Planning image: $IMAGE_URI""
 
       - name: Terraform plan
         working-directory: infra
-        run: terraform plan -no-color -var="policy_gate_image=${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}"
+        run: terraform plan -no-color -var="policy_gate_image=$IMAGE_URI"
 
       - name: Terraform apply (main only)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         working-directory: infra
-        run: terraform apply -auto-approve -var="policy_gate_image=${{ steps.ecr.outputs.registry }}/policy-gate:${{ github.sha }}"
+        run: terraform apply -auto-approve -var="policy_gate_image=$IMAGE_URI
